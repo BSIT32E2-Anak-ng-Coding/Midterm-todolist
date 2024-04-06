@@ -47,9 +47,12 @@ public class TodoService(ITodoRepository repository) : ITodoService
             DueDate = model.DueDate,
             IsActive = true,
             Status = Status.New,
+
         });
 
-        return 0;
+        
+        return await repository.SaveChangesAsync();
+        
     }
 
     public async Task<int> UpdateDescription(int id, string description)

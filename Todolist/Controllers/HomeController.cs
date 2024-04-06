@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore;
 using Todo.Service;
 using TodoList.Domain;
 using Todolist.Models;
@@ -20,7 +20,7 @@ namespace Todolist.Controllers
             ViewBag.Statuses =  Enum.GetValues(typeof(Status));
             //ViewBag.DueFilters = Filters.DueFilterValues;
 
-            //IQueryable<ToDo> query = context.ToDoS
+            //IQueryable<ToDo> query = service.ToDoS
             //    .Include(t => t.Category)
             //    .Include(t => t.Status);
 
@@ -61,26 +61,24 @@ namespace Todolist.Controllers
         [HttpGet]
         public IActionResult Add()
         {
-            ViewBag.Categories = context.Categories.ToList();
-            ViewBag.Statuses = context.Statuses.ToList();
-            var task = new ToDo { StatusId = "open" };
-            return View(task);
+            ViewBag.Categories = Enum.GetValues(typeof(Category));
+            ViewBag.Statuses = Enum.GetValues( typeof(Status));
+            return View();
         }
 
         [HttpPost]
-        public IActionResult Add(ToDo task)
+        public IActionResult Add(AddTodoModel model)
         {
             if (ModelState.IsValid)
             {
-                context.ToDoS.Add(task);
-                context.SaveChanges();
+                service.Add(model);
                 return RedirectToAction("Index");
             }
             else
             {
-                ViewBag.Categories = context.Categories.ToList();
-                ViewBag.Statuses = context.Statuses.ToList();
-                return View(task);
+                ViewBag.Categories = Enum.GetValues(typeof(Category));
+                ViewBag.Statuses = Enum.GetValues(typeof(Status));
+                return View(model);
             }
         }
 
@@ -90,37 +88,18 @@ namespace Todolist.Controllers
             string id = string.Join("-", filter);
             return RedirectToAction("Index", new { ID = id });
         }
-        [HttpPost]
-        public IActionResult MarkComplete([FromRoute] string id, ToDo selected)
-        {
-            selected = context.ToDoS.Find(selected.Id);
 
-            if (selected != null)
-            {
-                selected.StatusId = "closed";
-                context.SaveChanges();
-            }
-            return RedirectToAction("Index", new { ID = id });
-        }
-        
         [HttpPost]
-        public async Task<IActionResult> MarkComplete([FromRoute] string id, ToDo selected)
+        public async Task<IActionResult> MarkComplete([FromRoute] int id, ToDo selected)
         {
-            var markedAsDone = await _todoService.MarkAsDone(int.Parse(id));
+            var markedAsDone = await service.MarkAsDone(id);
             
             return RedirectToAction("Index", new { ID = id });
         }
         [HttpPost]
-        public IActionResult DeleteComplete(string id)
+        public async Task<IActionResult> DeleteComplete([FromRoute] int id, ToDo selected)
         {
-            var toDelete = context.ToDoS.Where(t => t.StatusId == "closed").ToList();
-
-            foreach (var task in toDelete)
-            {
-                context.ToDoS.Remove(task);
-            }
-            context.SaveChanges();
-
+            var Delete = await service.Delete(id);
             return RedirectToAction("Index", new { ID = id });
         }
     }

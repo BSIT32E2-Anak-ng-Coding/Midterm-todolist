@@ -8,6 +8,7 @@ public interface ITodoService
     Task<bool> MarkAsDone(int id);
     IEnumerable<TodoModel> GetAll();
     Task<int> Add(AddTodoModel model);
+
     Task<int> UpdateDescription(int id, string description);
     
 }
@@ -21,6 +22,7 @@ public record TodoModel
     public bool IsActive { get; init; } = true;
     public Status Status { get; init; } = Status.New;
     public bool Overdue => this.Status == Status.InProgress && DueDate < DateTime.Today;
+    
 }
 
 public record AddTodoModel
