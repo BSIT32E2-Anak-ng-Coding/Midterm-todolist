@@ -11,7 +11,7 @@
         public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<Status> Statuses { get; set; } = null!;
 
-        //seed datasdfns
+        //see
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

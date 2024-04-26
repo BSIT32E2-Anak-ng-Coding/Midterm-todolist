@@ -1,9 +1,9 @@
-﻿namespace Todolist.Models;
+﻿using Todolist.Models;
 
-public enum Status : int
+namespace Todolist.Models;
+
+public class Status
 {
-    Done = 1,
-    InProgress = 0,
-    Removed = 2,
-    New = 3,
+    public string StatusId { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 }
